@@ -355,11 +355,11 @@ def pickle_string_to_obj(s):
 if __name__ == "__main__":
     os.chdir('..')
     print(os.getcwd())
-    #FederatedClient(1)
-    parser = argparse.ArgumentParser()
-    parser.add_argument('num', help='number of client')
-    args = parser.parse_args()
-    print('Client #', args.num)
-    FederatedClient(args.num)
+    FederatedClient(1)
+    #parser = argparse.ArgumentParser()
+    #parser.add_argument('num', help='number of client')
+    #args = parser.parse_args()
+    #print('Client #', args.num)
+    #FederatedClient(args.num)
 
 

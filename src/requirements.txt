@@ -1,9 +1,10 @@
+python-socketio
+flask
+scikit-learn
+socketIO_client
 tensorflow
 keras
 pandas
 numpy
-python-socketio
-flask
-pickle
-scikit-learn
-socketIO_client
+scipy
+matplotlib

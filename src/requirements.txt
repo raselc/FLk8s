@@ -8,3 +8,6 @@ pandas
 numpy
 scipy
 matplotlib
+msgpack
+msgpack_numpy
+flask_socketio

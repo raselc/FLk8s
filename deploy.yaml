@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flk8-deploy
+  namespace: fedlearn
+  labels:
+    app: fl-server
+    purpose: example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fl-server
+      purpose: example
+    spec:
+      containers:
+      - name: fl-server
+        image: raselc/acnmo:nsl-kdd
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: "1"
+            memory: "700Mi"
+          requets:
+            cpu: "0.5"
+            memory: "500Mi"
+        ports:
+        - containerPort: 5000
+      imagePullSecrects:
+        - name: regcred
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: flk8-svc
+  namespace: fedlearn
+spec:
+  selector:
+    app: fl-server
+    ports:
+      - protocol: TCP
+        port: 5000
+        targetPort: 5000

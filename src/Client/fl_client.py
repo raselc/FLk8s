@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 
 import socket
 
-ipAddress = "localhost"
+ipAddress = ""
 
 class LocalModel(object):
     def __init__(self, model_config, data_collected):
@@ -353,13 +353,15 @@ def pickle_string_to_obj(s):
 
 
 if __name__ == "__main__":
+
     os.chdir('..')
     print(os.getcwd())
-    FederatedClient(1)
-    #parser = argparse.ArgumentParser()
-    #parser.add_argument('num', help='number of client')
-    #args = parser.parse_args()
+    #FederatedClient(1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('ip', help='ip address')
+    args = parser.parse_args()
+    ipAddress = args.ip
     #print('Client #', args.num)
-    #FederatedClient(args.num)
+    FederatedClient(1)
 
 

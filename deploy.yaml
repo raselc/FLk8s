@@ -12,21 +12,28 @@ spec:
     matchLabels:
       app: fl-server
       purpose: example
+  template:
+    metadata:
+      labels:
+        app: fl-server
+        purpose: example
     spec:
       containers:
       - name: fl-server
-        image: raselc/acnmo:nsl-kdd
-        imagePullPolicy: Always
+        image: raselc/acnmo:fl
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh"]
+        args: ["-c","python /app/Server/fl_server.py"]
         resources:
           limits:
             cpu: "1"
             memory: "700Mi"
-          requets:
+          requests:
             cpu: "0.5"
             memory: "500Mi"
         ports:
         - containerPort: 5000
-      imagePullSecrects:
+      imagePullSecrets:
         - name: regcred
 ---
 kind: Service
@@ -37,7 +44,7 @@ metadata:
 spec:
   selector:
     app: fl-server
-    ports:
-      - protocol: TCP
-        port: 5000
-        targetPort: 5000
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000

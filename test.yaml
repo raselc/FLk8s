@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client
+  namespace: fedlearn
+spec:
+  containers:
+  - name: client
+    image: raselc/acnmo:fl
+    imagePullPolicy: IfNotPresent
+    args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: client-svc
+  namespace: fedlearn
+spec:
+  selector:
+    app: client
+  ports:
+    - protocol: TCP
+      port: 5010
+      targetPort: 5010

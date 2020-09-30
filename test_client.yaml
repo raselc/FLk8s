@@ -7,18 +7,25 @@ spec:
   containers:
   - name: client
     image: raselc/acnmo:fl
-    imagePullPolicy: IfNotPresent
+    imagePullPolicy: Always
+    #command: ['/bin/sh']
+    #args: [-c,'python /app/Client/fl_client.py 10.32.0.2']
     args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']
+    ports:
+    - containerPort: 5010
+  imagePullSecrets:
+    - name: regcred
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: client-svc
+  name: client
+  labels:
+    run: client
   namespace: fedlearn
 spec:
   selector:
-    app: client
+    run: client
   ports:
     - protocol: TCP
       port: 5010
-      targetPort: 5010

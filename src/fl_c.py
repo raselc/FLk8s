@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 
 import socket
 
-ipAddress = "localhost"
+ipAddress = ""
 
 class LocalModel(object):
     def __init__(self, model_config, data_collected):
@@ -360,6 +360,7 @@ if __name__ == "__main__":
     parser.add_argument('num', help='number of client')
     args = parser.parse_args()
     print('Client #', args.num)
-    FederatedClient(args.num)
+    ipAddress = args.num
+    FederatedClient(1)
 
 

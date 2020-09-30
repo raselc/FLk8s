@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: server
+  namespace: fedlearn
+spec:
+  containers:
+  - name: server
+    image: raselc/acnmo:fl
+    imagePullPolicy: Always
+    args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']
+    ports:
+    - containerPort: 5000
+  imagePullSecrets:
+    - name: regcred
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: server-svc
+  namespace: fedlearn
+spec:
+  selector:
+    app: server
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000

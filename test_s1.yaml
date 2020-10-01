@@ -21,7 +21,7 @@ spec:
       containers:
       - name: server
         image: raselc/acnmo:fl
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         #command: ["/bin/sh"]
         args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']
         resources:

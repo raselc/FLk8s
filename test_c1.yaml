@@ -21,9 +21,10 @@ spec:
       containers:
       - name: client
         image: raselc/acnmo:fl
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         #command: ["/bin/sh"]
-        args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']
+        #args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']
+        args: [bash,-c,"python fl_c.py server"]
         resources:
           limits:
             cpu: "1"

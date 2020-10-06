@@ -1,0 +1,13 @@
+python-socketio
+flask
+scikit-learn
+socketIO_client
+tensorflow
+keras
+pandas
+numpy
+scipy
+matplotlib
+msgpack
+msgpack_numpy
+flask_socketio

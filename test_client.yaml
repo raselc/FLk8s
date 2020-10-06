@@ -1,31 +1,51 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: client
   namespace: fedlearn
+  labels:
+    app: client
+    purpose: example
 spec:
-  containers:
-  - name: client
-    image: raselc/acnmo:fl
-    imagePullPolicy: Always
-    #command: ['/bin/sh']
-    #args: [-c,'python /app/Client/fl_client.py 10.32.0.2']
-    args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']
-    ports:
-    - containerPort: 5010
-  imagePullSecrets:
-    - name: regcred
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+      purpose: example
+  template:
+    metadata:
+      labels:
+        app: client
+        purpose: example
+    spec:
+      containers:
+      - name: client
+        image: raselc/acnmo:fl
+        imagePullPolicy: Always
+        #command: ["/bin/sh"]
+        #args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']
+        args: [bash,-c,"python fl_c.py server"]
+        resources:
+          limits:
+            cpu: "1"
+            memory: "700Mi"
+          requests:
+            cpu: "0.5"
+            memory: "500Mi"
+        ports:
+        - containerPort: 5010
+      imagePullSecrets:
+        - name: regcred
 ---
 kind: Service
 apiVersion: v1
 metadata:
   name: client
-  labels:
-    run: client
   namespace: fedlearn
 spec:
   selector:
-    run: client
+    app: client
   ports:
     - protocol: TCP
       port: 5010
+      targetPort: 5010

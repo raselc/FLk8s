@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: raselc/acnmo:fl
+        image: raselc/acnmo:fl1
         imagePullPolicy: Always
         #command: ["/bin/sh"]
         args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']

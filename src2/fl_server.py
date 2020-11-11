@@ -40,7 +40,7 @@ class GlobalModel(object):
     """docstring for GlobalModel"""
 
     def __init__(self):
-        #elf.graph = tf.get_default_graph()
+        #self.graph = tf.get_default_graph()
         self.graph = tf.compat.v1.get_default_graph()
         self.model = self.build_model()
         self.current_weights = self.model.get_weights()
@@ -151,7 +151,7 @@ class FLServer(object):
     max_accuracy = 0
 
     def __init__(self, global_model, host, port):
-        self.global_model = global_model()
+        self.global_model = global_model()stats.txt
 
         # self.ready_client_sids = set()
         self.ready_client = pd.DataFrame(columns=('sID', 'TimeZone', 'Client_ID'))
@@ -211,9 +211,10 @@ class FLServer(object):
                 self.ready_client.drop(index_id, inplace=True)
                 self.ready_client.reset_index(drop=True, inplace=True)
 
+        # TODO:
         @self.socketio.on('client_wake_up')
         def handle_wake_up(data):
-
+            #TODO: resource prediction,
             data['client_time_zone'] = 'N'
             new_client = [request.sid, data['client_time_zone'], int(data['client_ID'])]
             self.ready_client.loc[len(self.ready_client)] = new_client
@@ -221,7 +222,7 @@ class FLServer(object):
             if self.ready_client.__len__() >= FLServer.MIN_NUM_WORKERS and self.current_round == round_to_start:
                 # add the rest of the clients (=90) to the list
                 # TODO: change the range
-                for i in range(1, 101):
+                for i in range(2, 101):
                     data = dict()
                     data['client_time_zone'] = 'N'
                     data['client_ID'] = i

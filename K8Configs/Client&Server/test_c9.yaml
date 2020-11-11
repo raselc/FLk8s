@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client9
+  namespace: fedlearn
+  labels:
+    app: client9
+    purpose: example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client9
+      purpose: example
+  template:
+    metadata:
+      labels:
+        app: client9
+        purpose: example
+    spec:
+      containers:
+      - name: client9
+        image: raselc/acnmo:fl1
+        imagePullPolicy: Always
+        #command: ["/bin/sh"]
+        #args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']
+        args: [bash,-c,"python fl_client.py 6"]
+        resources:
+          limits:
+            cpu: "1"
+            memory: "700Mi"
+          requests:
+            cpu: "0.1"
+            memory: "200Mi"
+        ports:
+        - containerPort: 5010
+      imagePullSecrets:
+        - name: regcred

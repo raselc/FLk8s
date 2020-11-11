@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: centra
+  namespace: centralized
+  labels:
+    app: centra
+    purpose: example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: centra
+      purpose: example
+  template:
+    metadata:
+      labels:
+        app: centra
+        purpose: example
+    spec:
+      containers:
+      - name: centra
+        image: raselc/acnmo:centra
+        imagePullPolicy: Always
+        #command: ["/bin/sh"]
+        args: [bash, -c,'for ((i-0;;i++)); do echo "hello";sleep 2000;done']
+        #args: [bash,-c,"python fl_client.py 1"]
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1000Mi"
+          requests:
+            cpu: "0.1"
+            memory: "200Mi"
+        ports:
+        - containerPort: 5010
+      imagePullSecrets:
+        - name: regcred

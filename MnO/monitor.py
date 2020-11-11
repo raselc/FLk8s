@@ -15,10 +15,10 @@ import socketio
 
 config.load_kube_config()
 
-os.environ["PROMETHEUS_URL"] = 'http://10.101.54.200:9090'
+os.environ["PROMETHEUS_URL"] = 'http://localhost:9090'
 debug = False
 # debug= True
-nameSpace = "monitor"
+nameSpace = "test"
 mList = []
 sio = socketio.Client()
 
@@ -77,7 +77,7 @@ def getCpu(containerName, nodeCpu):
     if debug: print("inside container cpu")
     cpu = 0
     prometheus = Prometheus()
-    qry = 'sum(irate (container_cpu_usage_seconds_total{pod="' + containerName + '",image!="",container!="POD"}[1m]))'
+    qry = 'sum(rate (container_cpu_usage_seconds_total{pod="' + containerName + '",image!="",container!="POD"}[1m]))'
     temp = json.loads(prometheus.query(metric=qry))
     if debug: print(temp)
     if temp == "":
@@ -203,7 +203,7 @@ def main():
         "ContainerID AssignedCPU AssignedMemory  CPUusage  MemoryUsage  BytesReceived  BytesSent")
     i = 0
     end_t = time.time() + 60 * 60
-    while (i<10):
+    while (i<100):
         # while time.time() < end_t:
         mList = []
         nodeInfo = getNodeInfo()
@@ -232,9 +232,9 @@ def main():
                 [datetime.datetime.now(), nodeName, cpuCount, memTot, nodeLcpu, nodeMemoryUsage, nodeNet[0], nodeNet[1],
                  nameSp, deployName, podName, podAssignedCpu, podAssignedMemory, podcpu, podMem, podNet[0], podNet[1]],
                   'a')
-            mList.append(
-                [nodeName, cpuCount, memTot, nodeLcpu, nodeMemoryUsage, nodeNet[0], nodeNet[1], nameSp, deployName,
-                 podName, podAssignedCpu, podAssignedMemory, podcpu, podMem, podNet[0], podNet[1]])
+            #mList.append(
+            #    [nodeName, cpuCount, memTot, nodeLcpu, nodeMemoryUsage, nodeNet[0], nodeNet[1], nameSp, deployName,
+            #     podName, podAssignedCpu, podAssignedMemory, podcpu, podMem, podNet[0], podNet[1]])
             #try:
             #    sio.connect('http://localhost:5001')
             #except:
@@ -244,7 +244,7 @@ def main():
         # print(mList)
 
         print("----------------------------------------------------------------------------------------------\n\n\n")
-        time.sleep(10)
+        time.sleep(2)
 
 
 def test():

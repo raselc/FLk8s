@@ -151,7 +151,7 @@ class FLServer(object):
     max_accuracy = 0
 
     def __init__(self, global_model, host, port):
-        self.global_model = global_model()stats.txt
+        self.global_model = global_model()
 
         # self.ready_client_sids = set()
         self.ready_client = pd.DataFrame(columns=('sID', 'TimeZone', 'Client_ID'))

@@ -142,7 +142,7 @@ class GlobalModel_MNIST_CNN(GlobalModel):
 class FLServer(object):
     #TODO: change the settings of the configs
     MIN_NUM_WORKERS = 1
-    MAX_NUM_ROUNDS = 1
+    MAX_NUM_ROUNDS = 3
     NUM_CLIENTS_CONTACTED_PER_ROUND = 5
     ROUNDS_BETWEEN_VALIDATIONS = 2
     start_time = 0
@@ -211,22 +211,29 @@ class FLServer(object):
                 self.ready_client.drop(index_id, inplace=True)
                 self.ready_client.reset_index(drop=True, inplace=True)
 
+        #update: added the get resources ( rasel )
         @self.socketio.on('client_wake_up')
         def handle_wake_up(data):
-
+            clientI = "client"+str(data['client_ID'])
             data['client_time_zone'] = 'N'
             new_client = [request.sid, data['client_time_zone'], int(data['client_ID'])]
 
+            clientRes = self.getResource(clientI)
+            clientCpu = str(int(float(clientRes.get('cpu'))*100))
+            print(clientI,clientRes,clientCpu)
+
             # check if client resources are enough, it not, kill
-            if not self.check_client_resources(str(data['client_ID'])):
+            if not self.check_client_resources(str(data['client_ID']),clientCpu):
                 # kill
                 print('kill')
+                self.socketio.emit('disconnect')
             else:
                 self.ready_client.loc[len(self.ready_client)] = new_client
 
                 if self.ready_client.__len__() >= FLServer.MIN_NUM_WORKERS and self.current_round == round_to_start:
                     # add the rest of the clients (=90) to the list
-                    for i in range(11, 101):
+                    #TODO: change range of the clients
+                    for i in range(2, 101):
                         data = dict()
                         data['client_time_zone'] = 'N'
                         data['client_ID'] = i
@@ -392,10 +399,11 @@ class FLServer(object):
 
         self.train_next_round()
 
-    def check_client_resources(self, client_ID):
+    #updated added cpu as parameter ( rasel )
+    def check_client_resources(self, client_ID,cpu):
 
         client_train_file = 'Datasets/ClientsDS/Unbalanced/Train/Client_' + client_ID + '.csv'
-        client_res_file = 'Datasets/ClientsDS/Resources/Client_' + client_ID + '.csv'
+        client_res_file = 'Datasets/ClientsDS/Resources/Res_' + cpu + '.csv'
 
         train_df = pd.read_csv(client_train_file, header=None)
         res_df = pd.read_csv(client_res_file)
@@ -417,6 +425,7 @@ class FLServer(object):
             print('Client', data['client_ID'], 'can participate')
         else:
             print('Client', data['client_ID'], 'is unable to complete the training within the defined threshold')
+            #TODO: new resource prediction and send UpdateResource
 
         return suff_time
 
@@ -683,6 +692,47 @@ class FLServer(object):
         predicted_training_time_util = self.res_util_prediction(res_df['DataSetSize'], res_df['TrainingTime'], new_data)
 
         return time_download + predicted_training_time_util + time_upload < time_threshold
+
+    # new function to get the client resources ( rasel )
+    # TODO: update IP address
+    def getResource(self,client):
+        sOrches = socketio.Client()
+        ipOrches = 'localhost'
+        res = {'cpu': '', 'memory': ''}
+        @sOrches.on('sendData')
+        def data():
+            sOrches.emit('getResource', client)
+        @sOrches.on('resource')
+        def resource(data):
+            sanitize(data)
+            sOrches.disconnect()
+        def sanitize(data):
+            if data['cpu'] == '1' or data['cpu'] == '2':
+                cpu = int(data['cpu'])
+            else:
+                cpu = int(data['cpu'][:-1]) / 1000
+            memory = int(data['memory'][:-2])
+            res['cpu'] = cpu
+            res['memory'] = memory
+        sOrches.connect('http://' + ipOrches + ':51707')
+        sOrches.wait()
+        return res
+
+    #Function to update resource ( rasel )
+    #TODO: Change ip address
+    def updateResource(self,client, res):
+        sOrches = socketio.Client()
+        ipOrches = 'localhost'
+        @sOrches.on('sendData')
+        def data():
+            print("2")
+            sOrches.emit('updateResource', {'name': client, 'cpu': res['cpu'], 'memory': res['memory']})
+        @sOrches.on('dis')
+        def dis():
+            sOrches.disconnect()
+        sOrches.connect('http://' + ipOrches + ':51707')
+        sOrches.wait()
+
 
 
 def obj_to_pickle_string(x):

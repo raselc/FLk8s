@@ -265,8 +265,11 @@ class FederatedClient(object):
         def on_connect():
             print('connect')
 
+        #updated disconnect ( rasel )
         def on_disconnect():
             print('disconnect')
+            sys.exit()
+
 
         def on_reconnect():
             print('reconnect')

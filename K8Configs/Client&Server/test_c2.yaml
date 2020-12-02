@@ -27,7 +27,7 @@ spec:
         args: [bash,-c,"python fl_client.py 2"]
         resources:
           limits:
-            cpu: "1"
+            cpu: "0.2"
             memory: "700Mi"
           requests:
             cpu: "0.1"
